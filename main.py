@@ -1,7 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
 
-
 class MyApp(QWidget):
 
     def __init__(self):
@@ -9,8 +8,14 @@ class MyApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        pass
+        self.setGeometry(300, 300, 1024, 768) # x, y, width, height
+        self.setWindowTitle('Touch Annotation')
+        self.show()
         
+    def database(self):
+        pass
+    
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
