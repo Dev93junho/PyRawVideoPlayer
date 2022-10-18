@@ -5,9 +5,6 @@ from engine import img_read_frame
 
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-def sequence_json(data):
-    pass
-
 def frame_json(data):
     
     info_dict = {
