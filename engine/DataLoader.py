@@ -10,12 +10,13 @@ class DataLoader():
         self.data_path = os.path.dirname(os.path.abspath(__file__))
         self.img_data_path = os.path.join(self.data_path, 'img/') if os.path.exists(os.path.join(self.data_path, 'img/')) else os.mkdir(os.path.join(self.data_path, 'img/'))
         self.traj_data_path = os.path.join(self.data_path, '*.tck') if os.path.exists(os.path.join(self.data_path, '*.tck')) else print('tck file is not exist')
-        self.label_data_path = os.path.join(self.data_path, '*.label')
+        # self.label_data_path = os.path.join(self.data_path, '*.label')
         # create dict file named load folder
+        
         
         self.img = self.img_data_path
         self.traj = self.traj_data_path
-        self.label = self.label_data_path
+        # self.label = self.label_data_path
         
 # uint8 to PIL Image
 def imgfile_read_frame(self, imgfile):
