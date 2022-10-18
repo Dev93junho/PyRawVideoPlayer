@@ -1,7 +1,7 @@
 import os, sys
 import datetime
 import numpy as np
-from PIL import ImageTk, Image
+from PIL import Image
 
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -11,6 +11,8 @@ class DataLoader():
         self.img_data_path = os.path.join(self.data_path, 'img/') if os.path.exists(os.path.join(self.data_path, 'img/')) else os.mkdir(os.path.join(self.data_path, 'img/'))
         self.traj_data_path = os.path.join(self.data_path, '*.tck') if os.path.exists(os.path.join(self.data_path, '*.tck')) else print('tck file is not exist')
         self.label_data_path = os.path.join(self.data_path, '*.label')
+        # create dict file named load folder
+        
         self.img = self.img_data_path
         self.traj = self.traj_data_path
         self.label = self.label_data_path
