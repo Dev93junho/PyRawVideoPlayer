@@ -8,6 +8,9 @@ from pyqtgraph import PlotWidget, plot
 
 from engine import DataLoader
 
+VALID_FORMAT = ('.JPG', '.JPEG', '.PNG')
+# VALID_FORMAT = ('.BMP', '.GIF', '.JPG', '.JPEG', '.PNG', '.PBM', '.PGM', '.PPM', '.TIFF', '.XBM')  # Image formats supported by Qt
+
 class DataOps(QWidget, QThread):
     def __init__(self):
         super().__init__()
