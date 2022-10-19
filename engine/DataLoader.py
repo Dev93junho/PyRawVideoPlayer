@@ -7,17 +7,30 @@ time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 class DataLoader():
     def __init__(self):
-        self.data_path = os.path.dirname(os.path.abspath(__file__))
-        self.img_data_path = os.path.join(self.data_path, 'img/') if os.path.exists(os.path.join(self.data_path, 'img/')) else os.mkdir(os.path.join(self.data_path, 'img/'))
-        self.traj_data_path = os.path.join(self.data_path, '*.tck') if os.path.exists(os.path.join(self.data_path, '*.tck')) else print('tck file is not exist')
-        # self.label_data_path = os.path.join(self.data_path, '*.label')
-        # create dict file named load folder
+        super().__init__()
+    
+    # 입력된 데이터 경로 형식 파악
+    
+    def valid_data_format(self, data_path):
+        # 로드 경로 입력받기
+        
+    
+        # *.img 파일형식 일 경우 파일 명과 동일한 폴더 생성
+        if self.data_path == 'img':
+            self.change_data_path = os.path.join(self.data_path, self.data_name)
+            if not os.path.exists(self.data_path):
+                os.makedirs(self.data_path)
+    
+        # 폴더 형식일 경우 폴더 내 구조 파악
         
         
-        self.img = self.img_data_path
-        self.traj = self.traj_data_path
-        # self.label = self.label_data_path
         
+            # img 폴더, tck 파일 존재 여부 확인
+            # img 폴더 없을 경우 img 폴더 생성
+        pass
+    
+    # 변경 중 로딩 메세지 출력
+    
 # uint8 to PIL Image
 def imgfile_read_frame(self, imgfile):
     imghdr = np.fromfile(imgfile, dtype=np.int32, count=2)
@@ -42,4 +55,3 @@ def export_to_dict(self, data):
         "status" :None, # need to be changed
     }
     return info_dict
-
