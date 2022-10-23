@@ -62,7 +62,7 @@ class MyApp(QWidget):
         # 데이터 로드
         self.line_load_data = QLineEdit()
         self.line_load_data.setPlaceholderText('데이터 폴더 경로를 입력하세요')
-        self.line_load_data.mouseDoubleClickEvent = QFileDialog.getExistingDirectory(self, '데이터 폴더 경로를 선택하세요')
+        # self.line_load_data.mouseDoubleClickEvent = QFileDialog.getExistingDirectory(self, '데이터 폴더 경로를 선택하세요')
         self.btn_load = QPushButton('Load Data')
         self.btn_load.clicked.connect(self.database.load_data)
         
@@ -81,7 +81,7 @@ class MyApp(QWidget):
 
         # 패널 요소 정의 및 출력
         self.setWindowTitle('AirTouch-Annotation')
-        self.setGeometry(300, 300, 1440, 1200)
+        self.setGeometry(100, 100, 1440, 700)
         self.show()
     
 if __name__ == '__main__':
