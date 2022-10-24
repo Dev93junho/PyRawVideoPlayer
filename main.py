@@ -1,11 +1,12 @@
 import sys, os
+from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QLabel, QLineEdit, 
                              QTextEdit, QPushButton, QFileDialog, QProgressBar, QMessageBox,
                              QCheckBox)
 from pyqtgraph import PlotWidget, plot
-
+import json
 from engine import DataLoader
 
 VALID_FORMAT = ('.JPG', '.JPEG', '.PNG')
@@ -14,9 +15,10 @@ VALID_FORMAT = ('.JPG', '.JPEG', '.PNG')
 class DataOps(QWidget, QThread):
     def __init__(self):
         super().__init__()
-        self.load_data()
+        self.load()
+        self.update()
         
-    def load_data(self):
+    def load(self):
         # find the data folder path
         self.data_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,6 +29,9 @@ class DataOps(QWidget, QThread):
             self.traj_data_path = os.path.join(self.data_path, '*.tck')    
         except:
             print ('error')
+            
+    def update(self):
+        pass
         
 class ImageOps(QWidget):
     def __init__(self):
@@ -41,30 +46,29 @@ class ImageOps(QWidget):
 class TrajOps(QThread):
     def __init__(self):
         super().__init__()
-        self.load_Traj()
-        
-    def load_Traj(self):
-        pass
+    
 
-class MyApp(QWidget):
+# QMainWidow can be call  ui file
+class AirNote(QtWidgets.QMainWindow):
 
     def __init__(self):
-        super().__init__()
+        super(AirNote, self).__init__()
+        uic.loadUi('./ui/main.ui', self)
         self.initUI()
 
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
-        self.database = DataOps()
-        self.Img_Viewer = ImageOps()
-        self.Plot_Viewer = TrajOps()
+        self.DataOps = DataOps()
+        self.ImgViewer = ImageOps()
+        self.PlotViewer = TrajOps()
 
         # 데이터 로드
         self.line_load_data = QLineEdit()
         self.line_load_data.setPlaceholderText('데이터 폴더 경로를 입력하세요')
         # self.line_load_data.mouseDoubleClickEvent = QFileDialog.getExistingDirectory(self, '데이터 폴더 경로를 선택하세요')
         self.btn_load = QPushButton('Load Data')
-        self.btn_load.clicked.connect(self.database.load_data)
+        # self.btn_load.clicked.connect(self.DataOps)
         
         # 그래프 요소 선택
         self.m_x_checkbox = QCheckBox('min_x')
@@ -76,15 +80,13 @@ class MyApp(QWidget):
 
         grid.addWidget(self.line_load_data, 0, 0)
         grid.addWidget(self.btn_load, 0, 1)
-        grid.addWidget(self.Img_Viewer, 1, 0)
+        grid.addWidget(self.ImgViewer, 1, 0)
         # grid.addWidget(self.Plot_Viewer, 2, 0)
 
         # 패널 요소 정의 및 출력
-        self.setWindowTitle('AirTouch-Annotation')
-        self.setGeometry(100, 100, 1440, 700)
         self.show()
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MyApp()
+    ex = AirNote()
     sys.exit(app.exec_())
