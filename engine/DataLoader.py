@@ -15,12 +15,12 @@ class DataLoader:
         self.argParse()
         
     # uint8 to PIL Image
-    def imgfile_read_frame(self, imgfile):
-        imghdr = np.fromfile(imgfile, dtype=np.int32, count=2)
+    def imgfile_read_frame(self):
+        imghdr = np.fromfile(__file__, dtype=np.int32, count=2)
         if len(imghdr) < 2: return None
         w, h = imghdr
         if w * h <= 0: return None
-        img = np.fromfile(imgfile, dtype=np.int16, count=w*h)
+        img = np.fromfile(__file__, dtype=np.int16, count=w*h)
         if len(img) < w * h:
             return None
         
