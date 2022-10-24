@@ -1,21 +1,12 @@
 import sys, os
-<<<<<<< HEAD
-import random
-from PyQt5 import QtWidgets
-=======
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
->>>>>>> ef313d58c9dd8a63d067b64034d6a9b47319d103
 from PyQt5.QtCore import QThread
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QLabel, QLineEdit, 
                              QAction, QPushButton, QFileDialog, QProgressBar, QMessageBox,
                              QCheckBox)
-<<<<<<< HEAD
-
-=======
 from pyqtgraph import PlotWidget, plot
 import json
->>>>>>> ef313d58c9dd8a63d067b64034d6a9b47319d103
 from engine import DataLoader
 
 #  graph library
@@ -32,9 +23,6 @@ VALID_FORMAT = ('.JPG', '.JPEG', '.PNG')
 class DataOps(QWidget, QThread):
     def __init__(self):
         super().__init__()
-<<<<<<< HEAD
-        self.filedialog()
-=======
         self.load()
         self.update()
         
@@ -52,7 +40,6 @@ class DataOps(QWidget, QThread):
             
     def update(self):
         pass
->>>>>>> ef313d58c9dd8a63d067b64034d6a9b47319d103
         
     def filedialog(self):
         DataLoader.export_to_dict(self, DataLoader.imgfile_read_frame(self, DataLoader.img_data_path))
@@ -107,7 +94,7 @@ class AirNote(QtWidgets.QMainWindow):
         grid.addWidget(self.line_load_data, 0, 0)
         grid.addWidget(self.btn_load, 0, 1)
         grid.addWidget(self.ImgViewer, 1, 0)
-        # grid.addWidget(self.Plot_Viewer, 2, 0)
+        
 
         # 패널 요소 정의 및 출력
         self.show()
