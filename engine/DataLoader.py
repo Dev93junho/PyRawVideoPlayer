@@ -1,3 +1,13 @@
+"""
+@ Data Loader 
+1. get data folder / file path
+2. read data folder / file convert to folder
+3. create & save json
+4. if find editorial data from main.py, then load json
+
+@ Author : Junho Shin, 2022.10
+"""
+
 import os, sys
 import datetime
 import numpy as np
