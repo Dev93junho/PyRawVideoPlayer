@@ -8,8 +8,9 @@
 import os, sys
 from PIL import Image
 import argparse
+import threading
 
-class ImgStream:
+class Stream:
     def __init__(self):
         super().__init__()
         self.read_pngs()
@@ -26,4 +27,4 @@ class ImgStream:
     def stream(self):
         pass
 if __name__ == '__main__':
-    ImgStream()
+    Stream()
