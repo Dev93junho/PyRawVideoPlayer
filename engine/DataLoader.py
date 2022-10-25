@@ -38,9 +38,9 @@ class DataLoader:
 
     def MainOps(root):
         abs_data_path = os.path.abspath(root) # data path is current path
-        splited_path = abs_data_path.split('/')[-1]
+        splited_path = os.path.dirname(root)
         data_name = abs_data_path.split('/')[-1].split('.')[0] # folder name is current path
-        # print(data_path, data_name) # print data path & folder name
+        print(splited_path, data_name) # print data path & folder name
         
         
         # if img folder exists, load the first image
@@ -50,11 +50,11 @@ class DataLoader:
             return img_data_path, traj_data_path
         else:
             new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
-            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) and shutil.move(data_name + ".tck", splited_path + data_name)
+            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) and shutil.move(splited_path + data_name + ".tck", splited_path + data_name)
             
             # if json folder exists, load the first json file. if not, create json folder
-            json_data_path = os.path.join(splited_path + data_name + '.json') if os.path.exists(os.path.join(splited_path + data_name + '.json')) else os.mkdir(os.path.join(splited_path + data_name + '.json'))
-            return new_data_path, org_new_data, json_data_path
+            # json_data_path = os.path.join(splited_path + data_name + '.json') if os.path.exists(os.path.join(splited_path + data_name + '.json')) else os.mkdir(os.path.join(splited_path + data_name + '.json'))
+            return new_data_path, org_new_data
         
         
     # define argument parser
