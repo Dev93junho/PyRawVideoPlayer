@@ -7,8 +7,7 @@
 
 @ Author : Junho Shin, 2022.10
 """
-
-import os, sys
+import os, shutil
 import datetime
 import numpy as np
 from PIL import Image
@@ -20,7 +19,6 @@ class DataLoader:
     def __init__(self, __file__):
         super().__init__()
         self.imgfile_read_frame()
-        self.export_to_json()
         self.MainOps()
         self.argParse()
         
@@ -36,7 +34,29 @@ class DataLoader:
         
         img = Image.fromarray(img.reshape(h, w))
         return img  
-    
+
+
+    def MainOps(root):
+        abs_data_path = os.path.abspath(root) # data path is current path
+        splited_path = abs_data_path.split('/')[-1]
+        data_name = abs_data_path.split('/')[-1].split('.')[0] # folder name is current path
+        # print(data_path, data_name) # print data path & folder name
+        
+        
+        # if img folder exists, load the first image
+        if os.path.isdir(os.path.join(data_name + '/img/')): 
+            img_data_path = os.path.join(data_name, 'img/')
+            traj_data_path = os.path.join(data_name, '*.tck')
+            return img_data_path, traj_data_path
+        else:
+            new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
+            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) and shutil.move(data_name + ".tck", splited_path + data_name)
+            
+            # if json folder exists, load the first json file. if not, create json folder
+            json_data_path = os.path.join(splited_path + data_name + '.json') if os.path.exists(os.path.join(splited_path + data_name + '.json')) else os.mkdir(os.path.join(splited_path + data_name + '.json'))
+            return new_data_path, org_new_data, json_data_path
+        
+        
     # define argument parser
     def argParse(self):
         self.parser = argparse.ArgumentParser(description='input data path')
@@ -44,30 +64,9 @@ class DataLoader:
         
         # 입력 인자 args에 저장
         self.args = self.parser.parse_args()
+        
         # 입력 인자값 출력
         print(self.args.data_path)
-
-
-    def MainOps(self):
-        self.data_path = os.path.dirname(os.path.abspath(__file__)) # data path is current path
-        self.folder_name = self.data_path.split('/')[-1] # folder name is current path
-        # if img folder exists, load the first image
-        if os.path.isdir(os.path.join(self.data_path, 'img/')): 
-            self.img_data_path = os.path.join(self.data_path, 'img/')
-            self.traj_data_path = os.path.join(self.data_path, '*.tck')
-        else:
-            print('img folder does not exist')
-            sys.exit()
-        
-        # if img folder doesn't exist, create img folder 
-        self.img_data_path = os.path.join(self.data_path, 'img/') if os.path.exists(os.path.join(self.data_path, 'img/')) else os.mkdir(os.path.join(self.data_path, 'img/')) and self.imgfile_read_frame('*.img', self.img_data_path)
-        self.traj_data_path = os.path.join(self.data_path, '*.tck') if os.path.exists(os.path.join(self.data_path, '*.tck')) else print('tck file is not exist')
-        
-        # if json folder exists, load the first json file. if not, create json folder
-        self.json_data_path = os.path.join(self.data_path, self.folder_name + '.json') if os.path.exists(os.path.join(self.data_path, '.json')) else os.mkdir(os.path.join(self.data_path, '.json'))
-        
-        #  write json file
-        self.export_to_json(self, self.json_data_path, self.img_data_path, self.traj_data_path)
 
 if __name__ == '__main__':
     # class instance
