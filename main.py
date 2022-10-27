@@ -49,7 +49,7 @@ class ImageOps(QWidget):
     def __init__(self):
         super().__init__()
         self.ImagePlayer()
-        self.ImageSeq()
+        
         
     def ImagePlayer(self):
         pass

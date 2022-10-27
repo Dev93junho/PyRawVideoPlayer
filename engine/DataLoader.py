@@ -35,11 +35,10 @@ class DataLoader:
         img = Image.fromarray(img.reshape(h, w))
         return img  
 
-
     def MainOps(root):
         abs_data_path = os.path.abspath(root) # data path is current path
         splited_path = os.path.dirname(root)
-        data_name = abs_data_path.split('/')[-1].split('.')[0] # folder name is current path
+        data_name = abs_data_path.split('/')[-1].split('.')[0]
         print(splited_path, data_name) # print data path & folder name
         
         
@@ -50,12 +49,8 @@ class DataLoader:
             return img_data_path, traj_data_path
         else:
             new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
-            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) and shutil.move(splited_path + data_name + ".tck", splited_path + data_name)
-            
-            # if json folder exists, load the first json file. if not, create json folder
-            # json_data_path = os.path.join(splited_path + data_name + '.json') if os.path.exists(os.path.join(splited_path + data_name + '.json')) else os.mkdir(os.path.join(splited_path + data_name + '.json'))
+            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) # and shutil.copy(splited_path + data_name + f"/{data_name}.tck", new_data_path)
             return new_data_path, org_new_data
-        
         
     # define argument parser
     def argParse(self):
