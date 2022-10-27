@@ -36,6 +36,6 @@ class SnaptoCursor(object):
         plt.show()
 
 
-SnaptoCursor.plot_graph(graph_path, 32)
+# SnaptoCursor.plot_graph(graph_path, 32)
 
 
