@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib.widgets as widgets
 import numpy as np
 
-
 graph_path = '/Volumes/SJH/DataStore/click/0101_20220214135917_0004_00.tck' # D2107
 
 class SnaptoCursor(object):
@@ -17,7 +16,7 @@ class SnaptoCursor(object):
     def mouse_move(self, event):
         if not event.inaxes: return
         x, y = event.xdata, event.ydata
-        indx = np.searchsorted(self.x, [x])[0]
+        indx = np.searchsorted(self.x, [x])[0] # find index of x
         x = self.x[indx]
         y = self.y[indx]
         self.ly.set_xdata(x)
@@ -26,19 +25,17 @@ class SnaptoCursor(object):
         self.txt.set_position((x,y))
         self.ax.figure.canvas.draw_idle()
 
-    def plot_graph(path):
+    def plot_graph(path, s):
         data = np.fromfile(path, dtype=np.float32)
-        data = data.reshape(1000, 7)
-        return data
+        data = data.reshape(-1, 7)[:, 2][s : s + 10]
+        # plot data
+        fig, ax = plt.subplots()
+        ax.plot(data)
+        cursor = SnaptoCursor(ax, np.arange(int(len(data))), data)
+        plt.connect('motion_notify_event', cursor.mouse_move)
+        plt.show()
 
-t = np.arange(0.0, 1.0, 0.01)
-s = np.sin(2*2*np.pi*t)
-fig, ax = plt.subplots()
 
-#cursor = Cursor(ax)
-cursor = SnaptoCursor(ax, t, s)
-cid =  plt.connect('motion_notify_event', cursor.mouse_move)
+SnaptoCursor.plot_graph(graph_path, 32)
 
-ax.plot(t, s,)
-plt.axis([0, 1, -1, 1])
-plt.show()
+
