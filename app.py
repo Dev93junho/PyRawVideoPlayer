@@ -9,7 +9,15 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
 
+class MySignal(QObject):
+    signal = pyqtSignal(str)
+    def __init__(self):
+        super().__init__()
 
 class Ui_AirNote(object):
     def setupUi(self, AirNote):
@@ -32,7 +40,11 @@ class Ui_AirNote(object):
         self.graph_view.setMouseTracking(True)
         self.graph_view.setStyleSheet("background-color : rgba(255, 255, 255, 128)\n"
 "")
+        
         self.graph_view.setObjectName("graph_view")
+        self.fig = plt.figure(figsize=[20, 10])
+        self.a = plt.subplot(111)
+        self.canvas=FigureCanvas(self.fig)
         self.gridLayout_3.addWidget(self.graph_view, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(1298, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem, 1, 0, 1, 1)
