@@ -1,3 +1,10 @@
+"""
+1. get data file path
+2. convert binary to numpy array per 10 frames
+3. print 10 frame's trajectory
+4. if get update request, windowing to next 10 frames trajectory
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.widgets as widgets
 import numpy as np
