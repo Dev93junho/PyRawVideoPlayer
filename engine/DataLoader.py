@@ -36,11 +36,22 @@ import json
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 class DataLoader:
-    def __init__(self, __file__):
-        super().__init__()
-        self.imgfile_read_frame()
-        self.MainOps()
-        self.argParse()
+    def __init__(self, root):
+        # parse data path
+        abs_data_path = os.path.abspath(root) # data path is current path
+        splited_path = os.path.dirname(root)
+        data_name = abs_data_path.split('/')[-1].split('.')[0]
+        print(splited_path, data_name) # print data path & folder name
+        
+        # 데이터 구조화. 이미 형성되어있으면 pass
+        if os.path.isdir(os.path.join(data_name + '/img/')): 
+            img_data_path = os.path.join(data_name, 'img/')
+            traj_data_path = os.path.join(data_name, '*.tck')
+            return img_data_path, traj_data_path
+        else:
+            new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
+            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) # and shutil.copy(splited_path + data_name + f"/{data_name}.tck", new_data_path)
+            return new_data_path, org_new_data
         
     # uint8 to PIL Image
     def imgfile_read_frame(self):
@@ -56,7 +67,7 @@ class DataLoader:
         return img  
 
     # iterable create in json file
-    def Create(img_data_path, traj_data_path, filename):
+    def create_json(img_data_path, traj_data_path, filename):
         # create json array per frame
         for i in range(len(img_data_path)):
             filename = {
@@ -68,40 +79,23 @@ class DataLoader:
             },
         return json.dumps(filename)
         
-    def Read(json_data_path):
+    def read_json(json_data_path):
         # find json file in data root
         with open(json_data_path, 'r') as f:
             json_data = json.load(f)
             return json_data
 
-    def Update(path, idx, value):
+    def update_json(path, idx, value):
         with open(path, 'w+') as f:
             pre_data = json.load(f)
             suf_data = pre_data[idx] = value
             return suf_data
 
-    def Delete(path, idx):
+    def delete_json(path, idx):
         with open(path, 'w+') as f:
             pre_data = json.load(f)
             suf_data = pre_data[idx] = None
             return suf_data
-
-    def MainOps(root):
-        abs_data_path = os.path.abspath(root) # data path is current path
-        splited_path = os.path.dirname(root)
-        data_name = abs_data_path.split('/')[-1].split('.')[0]
-        print(splited_path, data_name) # print data path & folder name
-        
-        
-        # if img folder exists, load the first image
-        if os.path.isdir(os.path.join(data_name + '/img/')): 
-            img_data_path = os.path.join(data_name, 'img/')
-            traj_data_path = os.path.join(data_name, '*.tck')
-            return img_data_path, traj_data_path
-        else:
-            new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
-            org_new_data = os.mkdir(os.path.join(splited_path, data_name + '/img/')) # and shutil.copy(splited_path + data_name + f"/{data_name}.tck", new_data_path)
-            return new_data_path, org_new_data
         
     # define argument parser
     def argParse(self):
@@ -110,7 +104,6 @@ class DataLoader:
         
         # 입력 인자 args에 저장
         self.args = self.parser.parse_args()
-        
         # 입력 인자값 출력
         print(self.args.data_path)
 
