@@ -22,7 +22,7 @@ class Stream:
         for png in os.listdir('img'):
             if png.endswith('.png'):
                 self.img = Image.open(png)
-                # self.img.show()
+                
                 return self.img
     
     # binary to float
