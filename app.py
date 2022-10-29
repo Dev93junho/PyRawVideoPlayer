@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from engine import dataloader
+# from engine import dataloader
 
 class Ui_AirNote(object):
     def setupUi(self, AirNote):
@@ -154,7 +154,7 @@ class Ui_AirNote(object):
         self.pushButton.setText(_translate("AirNote", "o"))
 
     def filedialog(self):
-        fname = QFileDialog.getOpenFileName(self, dataloader)
+        fname = QFileDialog.getOpenFileName(self)
         print(fname)
         # self.label.setPixmap(QPixmap(fname[0]))
         
