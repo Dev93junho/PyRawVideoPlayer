@@ -10,9 +10,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-# from engine import dataloader
+from engine import dataloader
 
-class Ui_AirNote(object):
+class Ui_AirNote(QtWidgets.QMainWindow):
     def setupUi(self, AirNote):
         AirNote.setObjectName("AirNote")
         AirNote.resize(1362, 825)
@@ -131,7 +131,7 @@ class Ui_AirNote(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(1290, 30, 41, 41))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(self.filedialog)
+        self.pushButton.clicked.connect(self.selected_dir)
         
         
         AirNote.setCentralWidget(self.centralwidget)
@@ -144,7 +144,7 @@ class Ui_AirNote(object):
 
     def retranslateUi(self, AirNote):
         _translate = QtCore.QCoreApplication.translate
-        AirNote.setWindowTitle(_translate("AirNote", "MainWindow"))
+        AirNote.setWindowTitle(_translate("AirNote", "AirNote"))
         self.checkBox.setText(_translate("AirNote", "min_x"))
         self.checkBox_2.setText(_translate("AirNote", "min_y"))
         self.checkBox_3.setText(_translate("AirNote", "min_z"))
@@ -153,14 +153,15 @@ class Ui_AirNote(object):
         self.checkBox_6.setText(_translate("AirNote", "fist_z"))
         self.pushButton.setText(_translate("AirNote", "o"))
 
-    def filedialog(self):
+    def selected_dir(self):
         fname = QFileDialog.getOpenFileName(self)
-        print(fname)
-        # self.label.setPixmap(QPixmap(fname[0]))
+        # fname send to dataloader
+        print(fname[0])
+        dataloader(fname[0])
+        print("loaded")
         
         
-
-
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
