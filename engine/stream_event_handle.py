@@ -5,11 +5,9 @@
 3. if click the stop button, stop streaming
 """
 
-import os, sys
+import os
 from PIL import Image
 import numpy as np
-import argparse
-import threading
 
 class Stream:
     def __init__(self):
@@ -37,9 +35,38 @@ class Stream:
         fist_z = data[:, 5]
         label = data[:, 6]
         return min_x, min_y, min_z, fist_x, fist_y, fist_z, label
+    
+    @staticmethod
+    def stream_png(self):
+        # if signal is true, stream next 10 png images
+        if self.signal is True:
+            for i in range(10):
+                self.img = self.read_pngs()
+                print(self.img)
+                
+        # if signal is false, stop streaming
+        elif self.signal is False:
+            pass
         
-    def stream(self):
-        pass
+        # if signal is none, pass
+        elif self.signal is None:
+            pass
+
+    @staticmethod
+    def stream_traj(self):
+        # if signal is true, stream next 10 frames trajectory
+        if self.signal is True:
+            for i in range(10):
+                self.min_x, self.min_y, self.min_z, self.fist_x, self.fist_y, self.fist_z, self.label = self.tck2traj()
+                print(self.min_x, self.min_y, self.min_z, self.fist_x, self.fist_y, self.fist_z, self.label)
+                
+        # if signal is false, stop streaming
+        elif self.signal is False:
+            pass
+        
+        # if signal is none, pass
+        elif self.signal is None:
+            pass
     
 if __name__ == '__main__':
     Stream()
