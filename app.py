@@ -157,10 +157,11 @@ class Ui_AirNote(QtWidgets.QMainWindow):
         fname = QFileDialog.getOpenFileName(self)
         # fname send to dataloader
         print(fname[0])
-        # DataLoader(fname[0])
+        DataLoader(fname[0])
         
         print("loaded")
         # image viewer update
+        
         
         
         
