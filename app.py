@@ -10,8 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from engine import dataloader
-
+from engine.DataLoader import DataLoader
+ 
 class Ui_AirNote(QtWidgets.QMainWindow):
     def setupUi(self, AirNote):
         AirNote.setObjectName("AirNote")
@@ -157,8 +157,11 @@ class Ui_AirNote(QtWidgets.QMainWindow):
         fname = QFileDialog.getOpenFileName(self)
         # fname send to dataloader
         print(fname[0])
-        dataloader(fname[0])
+        # DataLoader(fname[0])
+        
         print("loaded")
+        # image viewer update
+        
         
         
         

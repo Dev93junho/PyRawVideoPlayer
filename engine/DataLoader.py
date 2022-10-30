@@ -37,7 +37,7 @@ time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 class DataLoader:
     def __init__(self):
-        super(DataLoader, self).__init__()
+        super().__init__()
         # parse data  path
         self.root = self.argParse(self.root)
         abs_data_path = os.path.abspath(self.root) 
