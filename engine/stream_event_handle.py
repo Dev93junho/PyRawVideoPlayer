@@ -36,9 +36,9 @@ class Stream:
         label = data[:, 6]
         return min_x, min_y, min_z, fist_x, fist_y, fist_z, label
     
-    @staticmethod
+    
     def stream_png(self):
-        # if signal is true, stream next 10 png images
+        # if pyqtsignal is true, stream next 10 png images
         if self.signal is True:
             for i in range(10):
                 self.img = self.read_pngs()
@@ -52,7 +52,6 @@ class Stream:
         elif self.signal is None:
             pass
 
-    @staticmethod
     def stream_traj(self):
         # if signal is true, stream next 10 frames trajectory
         if self.signal is True:

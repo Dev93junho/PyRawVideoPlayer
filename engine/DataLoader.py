@@ -58,7 +58,8 @@ class DataLoader:
             new_tck_path = splited_path + '/' + data_name + '/' + data_name + '.tck' # get tck file path
             
             # savd json
-            DataLoader.create_json(new_data_path, new_tck_path, data_name) 
+            trajectory_set = DataLoader.tck_to_trj(new_tck_path)[0] # convert tck to trj
+            DataLoader.create_json(new_data_path, trajectory_set, data_name) 
             
             if os.path.exists(new_data_path + '/img'):
                 return None
@@ -87,20 +88,21 @@ class DataLoader:
         return img  
 
     # iterable create in json file
-    def create_json(img_data_path, traj_data_path, filename):
+    def create_json(data_path, traj_data_path, filename):
         # create json array per frame
         make_json = []
-        with open(filename + '.json', 'w') as f:
-            for i in range(len(img_data_path)):
+        with open(data_path + filename + '.json', 'w') as f:
+            for i in range(len(traj_data_path)):
                 make_json.append({
                     'frame_idx': i,
                     'sequence' : None, # need to be changed
-                    'img_path': img_data_path[i],
+                    'img_path': data_path[i],
                     'traj_info': traj_data_path[i],
                     'move_state' : None, # 0 : stop, 1 : move
                     "label" :None, # need to be changed
                 }),
-            json.dump(make_json, f, indent=4) # save json file
+            # save json file to data folder
+            json.dumps(make_json, indent=4, ensure_ascii=False)
         
         
     def read_json(json_data_path):
@@ -121,6 +123,21 @@ class DataLoader:
             suf_data = pre_data[idx] = None
             return suf_data
     
+    def tck_to_trj(tck_path):
+        # read tck file
+        data = np.fromfile(tck_path, dtype=np.float32)
+        all_data = data.reshape(1000, 7)
+        # min_x = data[:, 0]
+        # min_y = data[:, 1]
+        # min_z = data[:, 2]
+        # fist_x = data[:, 3]
+        # fist_y = data[:, 4]
+        # fist_z = data[:, 5]
+        # label = data[:, 6]
+        return all_data #, min_x, min_y, min_z, fist_x, fist_y, fist_z, label
+
+
+    
     # # define argument parser
     # def argParse(self):
     #     self.parser = argparse.ArgumentParser(description='input data path')
@@ -137,13 +154,5 @@ class DataLoader:
 if __name__ == '__main__':
     # class instance
     dataloader = DataLoader(__file__)
-    # parser = argparse.ArgumentParser(description='input data path')
-    # parser.add_argument('--data_path', default=True, help='input data path', action='store_true')
-    # parser.add_argument('--json_path', default=False, help='input json path')
-    # parser.add_argument('--frm_idx', default=False, help='input frame index')
-    # parser.add_argument('--idx', default=False, help='input data index')
-    # parser.add_argument('--value', default=False, help='input change value')
-    
-    # args = parser.parse_args()
-    # print(args)
+    # dataloader.argParse() # argument parser
     
