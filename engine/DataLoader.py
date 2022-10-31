@@ -30,7 +30,6 @@ import os, shutil
 import datetime
 import numpy as np
 from PIL import Image
-import argparse
 import json
 
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -102,7 +101,7 @@ class DataLoader:
                     "label" :None, # need to be changed
                 }),
             # save json file to data folder
-            json.dumps(make_json, indent=4, ensure_ascii=False)
+            json.dump(make_json, f, indent=4) # save json file to data folder
         
         
     def read_json(json_data_path):
@@ -125,34 +124,11 @@ class DataLoader:
     
     def tck_to_trj(tck_path):
         # read tck file
-        data = np.fromfile(tck_path, dtype=np.float32)
-        all_data = data.reshape(1000, 7)
-        # min_x = data[:, 0]
-        # min_y = data[:, 1]
-        # min_z = data[:, 2]
-        # fist_x = data[:, 3]
-        # fist_y = data[:, 4]
-        # fist_z = data[:, 5]
-        # label = data[:, 6]
-        return all_data #, min_x, min_y, min_z, fist_x, fist_y, fist_z, label
-
-
-    
-    # # define argument parser
-    # def argParse(self):
-    #     self.parser = argparse.ArgumentParser(description='input data path')
-    #     self.parser.add_argument('--data_path', default=True, help='input data path', action='store_true')
-    #     self.parser.add_argument('--json_path', default=False, help='input json path')
-    #     self.parser.add_argument('--frm_idx', default=False, help='input frame index')
-    #     self.parser.add_argument('--idx', default=False, help='input data index')
-    #     self.parser.add_argument('--value', default=False, help='input change value')
-       
-    #     # 입력 인자 args에 저장
-    #     self.args = self.parser.parse_args()
-    #     return self.args
+        raw = np.fromfile(tck_path, dtype=np.float32)
+        trj_set = raw.reshape(1000, 7)[:, 0:5] 
+        return trj_set 
     
 if __name__ == '__main__':
     # class instance
     dataloader = DataLoader(__file__)
-    # dataloader.argParse() # argument parser
     
