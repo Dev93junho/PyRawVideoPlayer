@@ -39,42 +39,40 @@ class DataLoader:
     def __init__(self, __file__):
         super().__init__()
         # parse data  path
-        self.root = self.argParse(__file__)
-        abs_data_path = os.path.abspath(self.root) 
-        splited_path = os.path.dirname(self.root)
+        # self.root = self.argParse(__file__)
+        abs_data_path = os.path.abspath(__file__) 
+        splited_path = os.path.dirname(__file__)
         data_name = abs_data_path.split('/')[-1].split('.')[0]
         print("디렉토리 경로 : ", splited_path, "파일(폴더)명 : ", data_name) # print data path & folder name
                
-        # 데이터 구조화. 이미 형성되어있으면 pass
-        if os.path.isdir(os.path.join(data_name + '/img/')): 
-            new_img_path = os.path.join(data_name, 'img/')
+        # if img folder not exist
+        if os.path.exists(splited_path + '/' + data_name + '/img'):
+            return None
+        if not os.path.isdir(splited_path + '/' + data_name):
+            print("데이터 폴더가 존재하지 않습니다. 데이터 폴더를 생성합니다.")
             
-            # save image file to img folder
-            for i in range(len(os.listdir(self.root))):
-                img = self.imgfile_read_frame()
-                img.save(os.path.join(new_img_path, str(i) + '.png')) 
-                
-            new_trj_path = os.path.join(data_name, '*.tck')
-            self.create_json(new_img_path, new_trj_path, data_name) # create json file
-            return new_img_path, new_trj_path
-        
-        elif os.path.isfile(self.root, data_name + '.img'):
-            new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
-            new_img_path = os.mkdir(os.path.join(splited_path, data_name + '/img/')) # make new img folder
+            os.mkdir(splited_path + '/' + data_name) # create img folder
+            shutil.copyfile(splited_path + '/' + data_name + '.tck', splited_path + '/' + data_name + '/' + data_name + '.tck')
             
-            # save image file to img folder
-            for i in range(len(os.listdir(self.root))):
-                img = self.imgfile_read_frame()
-                img.save(os.path.join(new_img_path, str(i) + '.png')) 
-                
-            new_trj_path = shutil.copy(splited_path + data_name + f"/{data_name}.tck", new_data_path)
-            self.create_json(new_img_path, new_trj_path, data_name) # create json file
-            return new_data_path, new_img_path, new_trj_path
+            new_data_path = splited_path + '/' + data_name  
+            new_tck_path = splited_path + '/' + data_name + '/' + data_name + '.tck' # get tck file path
             
-        else:
-            msg = '입력 값이 올바르지 않습니다.'
-            return msg
+            # savd json
+            DataLoader.create_json(new_data_path, new_tck_path, data_name) 
+            
+            if os.path.exists(new_data_path + '/img'):
+                return None
+            else:
+                os.mkdir(new_data_path + '/' + 'img') # create img folder
+                new_img_path = new_data_path + '/' + 'img' # get img folder path
+            
+                # save png file to img folder from img file
+                img_root = splited_path + '/' + data_name + '.img' # get img file path
+                for i in range(1000):
+                    img = self.imgfile_read_frame(img_root)
+                    img.save(new_img_path + '/' + str(i) + '.png') # save png file to img folder
 
+            
     # uint8 to PIL Image
     def imgfile_read_frame(self):
         imghdr = np.fromfile(__file__, dtype=np.int32, count=2)
@@ -94,16 +92,16 @@ class DataLoader:
         make_json = []
         with open(filename + '.json', 'w') as f:
             for i in range(len(img_data_path)):
-                {
+                make_json.append({
                     'frame_idx': i,
                     'sequence' : None, # need to be changed
                     'img_path': img_data_path[i],
                     'traj_info': traj_data_path[i],
                     'move_state' : None, # 0 : stop, 1 : move
                     "label" :None, # need to be changed
-                },
-            make_json.append(dict) # append dict to json array
-        return make_json
+                }),
+            json.dump(make_json, f, indent=4) # save json file
+        
         
     def read_json(json_data_path):
         # find json file in data root
@@ -122,58 +120,30 @@ class DataLoader:
             pre_data = json.load(f)
             suf_data = pre_data[idx] = None
             return suf_data
-
-        # # parse data  path
-        # self.root = self.argParse(self.root)
-        # abs_data_path = os.path.abspath(self.root) 
-        # splited_path = os.path.dirname(self.root)
-        # data_name = abs_data_path.split('/')[-1].split('.')[0]
-        # print("디렉토리 경로 : ", splited_path, "파일(폴더)명 : ", data_name) # print data path & folder name
-               
-        # # 데이터 구조화. 이미 형성되어있으면 pass
-        # if os.path.isdir(os.path.join(data_name + '/img/')): 
-        #     new_img_path = os.path.join(data_name, 'img/')
-            
-        #     # save image file to img folder
-        #     for i in range(len(os.listdir(self.root))):
-        #         img = self.imgfile_read_frame()
-        #         img.save(os.path.join(new_img_path, str(i) + '.png')) 
-                
-        #     new_trj_path = os.path.join(data_name, '*.tck')
-        #     self.create_json(new_img_path, new_trj_path, data_name) # create json file
-        #     return new_img_path, new_trj_path
-        
-        # elif os.path.isfile(self.root, data_name + '.img'):
-        #     new_data_path = os.mkdir(os.path.join(splited_path, data_name)) # if not, make new data folder
-        #     new_img_path = os.mkdir(os.path.join(splited_path, data_name + '/img/')) # make new img folder
-            
-        #     # save image file to img folder
-        #     for i in range(len(os.listdir(self.root))):
-        #         img = self.imgfile_read_frame()
-        #         img.save(os.path.join(new_img_path, str(i) + '.png')) 
-                
-        #     new_trj_path = shutil.copy(splited_path + data_name + f"/{data_name}.tck", new_data_path)
-        #     self.create_json(new_img_path, new_trj_path, data_name) # create json file
-        #     return new_data_path, new_img_path, new_trj_path
-            
-        # else:
-        #     msg = '입력 값이 올바르지 않습니다.'
-        #     return msg        
     
-    # define argument parser
-    def argParse(self):
-        self.parser = argparse.ArgumentParser(description='input data path')
-        self.parser.add_argument('--data_path', default=True, help='input data path', action='store_true')
-        self.parser.add_argument('--json_path', default=False, help='input json path')
-        self.parser.add_argument('--frm_idx', default=False, help='input frame index')
-        self.parser.add_argument('--idx', default=False, help='input data index')
-        self.parser.add_argument('--value', default=False, help='input change value')
+    # # define argument parser
+    # def argParse(self):
+    #     self.parser = argparse.ArgumentParser(description='input data path')
+    #     self.parser.add_argument('--data_path', default=True, help='input data path', action='store_true')
+    #     self.parser.add_argument('--json_path', default=False, help='input json path')
+    #     self.parser.add_argument('--frm_idx', default=False, help='input frame index')
+    #     self.parser.add_argument('--idx', default=False, help='input data index')
+    #     self.parser.add_argument('--value', default=False, help='input change value')
        
-        # 입력 인자 args에 저장
-        self.args = self.parser.parse_args()
-        return self.args
+    #     # 입력 인자 args에 저장
+    #     self.args = self.parser.parse_args()
+    #     return self.args
     
 if __name__ == '__main__':
     # class instance
-    dataloader = DataLoader.main(__file__)
-    dataloader.argParse()
+    dataloader = DataLoader(__file__)
+    # parser = argparse.ArgumentParser(description='input data path')
+    # parser.add_argument('--data_path', default=True, help='input data path', action='store_true')
+    # parser.add_argument('--json_path', default=False, help='input json path')
+    # parser.add_argument('--frm_idx', default=False, help='input frame index')
+    # parser.add_argument('--idx', default=False, help='input data index')
+    # parser.add_argument('--value', default=False, help='input change value')
+    
+    # args = parser.parse_args()
+    # print(args)
+    
