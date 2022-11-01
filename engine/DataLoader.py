@@ -32,7 +32,7 @@ import numpy as np
 from PIL import Image
 import json
 
-time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") # get current time
 
 class DataLoader:
     def __init__(self, __file__):
@@ -56,9 +56,6 @@ class DataLoader:
             new_data_path = splited_path + '/' + data_name  
             new_tck_path = splited_path + '/' + data_name + '/' + data_name + '.tck' # get tck file path
             
-            # savd json
-            trajectory_set = DataLoader.tck_to_trj(new_tck_path)[0] # convert tck to trj
-            DataLoader.create_json(new_data_path, trajectory_set, data_name) 
             
             if os.path.exists(new_data_path + '/img'):
                 return None
@@ -66,12 +63,23 @@ class DataLoader:
                 os.mkdir(new_data_path + '/' + 'img') # create img folder
                 new_img_path = new_data_path + '/' + 'img' # get img folder path
             
-                # save png file to img folder from img file
-                img_root = splited_path + '/' + data_name + '.img' # get img file path
-                for i in range(1000):
-                    img = self.imgfile_read_frame(img_root)
-                    img.save(new_img_path + '/' + str(i) + '.png') # save png file to img folder
-
+                # # save png file to img folder from img file
+                # img_root = splited_path + '/' + data_name + '.img' # get img file path
+                # for i in range(1000):
+                #     img = self.imgfile_read_frame(img_root)
+                #     img.save(new_img_path + '/' + str(i) + '.png') # save png file to img folder
+            
+            # savd json
+            trajectory_set = DataLoader.tck_to_trj(new_tck_path)[0] # convert tck to trj
+            label_set = DataLoader.tck_to_trj(new_tck_path)[1] # convert tck to trj
+            
+            
+            
+            # convert numpy array to float
+            trajectory_set_convert = trajectory_set.tolist() # convert numpy array to float
+            label_set_convert = label_set.tolist() # convert numpy array to float
+            DataLoader.create_json(new_data_path, trajectory_set_convert, label_set_convert, data_name) 
+            
             
     # uint8 to PIL Image
     def imgfile_read_frame(self):
@@ -87,18 +95,18 @@ class DataLoader:
         return img  
 
     # iterable create in json file
-    def create_json(data_path, traj_data_path, filename):
+    def create_json(data_path, traj_data_path, label, filename):
         # create json array per frame
         make_json = []
-        with open(data_path + filename + '.json', 'w') as f:
-            for i in range(len(traj_data_path)):
+        with open(data_path + '/' + filename + '.json', 'w') as f:
+            for i in range (len(traj_data_path)):
                 make_json.append({
-                    'frame_idx': i,
+                    'frame_idx': i + 1,
                     'sequence' : None, # need to be changed
-                    'img_path': data_path[i],
+                    # 'img_path': data_path[i],
                     'traj_info': traj_data_path[i],
                     'move_state' : None, # 0 : stop, 1 : move
-                    "label" :None, # need to be changed
+                    "label" : label[i], # get initial label
                 }),
             # save json file to data folder
             json.dump(make_json, f, indent=4) # save json file to data folder
@@ -125,8 +133,9 @@ class DataLoader:
     def tck_to_trj(tck_path):
         # read tck file
         raw = np.fromfile(tck_path, dtype=np.float32)
-        trj_set = raw.reshape(1000, 7)[:, 0:5] 
-        return trj_set 
+        trj_set = raw.reshape(-1, 7)[:, 0:6] # get trajectory data
+        lbl_set = raw.reshape(-1, 7)[:, -1] # get label data
+        return trj_set, lbl_set 
     
 if __name__ == '__main__':
     # class instance
