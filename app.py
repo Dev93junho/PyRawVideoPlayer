@@ -200,9 +200,6 @@ class Ui_AirNote(QtWidgets.QMainWindow):
         self.img_view_sm_1.setPixmap(QPixmap.fromImage(img))
         self.img_view_sm_1.setScaledContents(True)
 
-    def show_grapgh(self, graph):
-        self.graph_view = FigureCanvas(graph)
-        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

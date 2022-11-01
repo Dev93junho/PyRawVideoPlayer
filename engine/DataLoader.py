@@ -42,7 +42,7 @@ class DataLoader:
         abs_data_path = os.path.abspath(__file__) 
         splited_path = os.path.dirname(__file__)
         data_name = abs_data_path.split('/')[-1].split('.')[0]
-        print("디렉토리 경로 : ", splited_path, "파일(폴더)명 : ", data_name) # print data path & folder name
+        print("디렉토리 경로 : ", splited_path,"\n","파일(폴더)명 : ", data_name) # print data path & folder name
                
         # if img folder not exist
         if os.path.exists(splited_path + '/' + data_name + '/img'):
@@ -64,11 +64,9 @@ class DataLoader:
                 new_img_path = new_data_path + '/' + 'img' # get img folder path
             
                 # # save png file to img folder from img file
-                # img_root = splited_path + '/' + data_name + '.img' # get img file path
-                # for i in range(1000):
-                #     img = self.imgfile_read_frame(img_root)
-                #     img.save(new_img_path + '/' + str(i) + '.png') # save png file to img folder
-            
+                img_root = splited_path + '/' + data_name + '.img' # get img file path
+                img = DataLoader.imgfile_read_frame(img_root) # read img file
+                
             # savd json
             trajectory_set = DataLoader.tck_to_trj(new_tck_path)[0] # convert tck to trj
             label_set = DataLoader.tck_to_trj(new_tck_path)[1] # convert tck to trj
@@ -91,7 +89,8 @@ class DataLoader:
         if len(img) < w * h:
             return None
         
-        img = Image.fromarray(img.reshape(h, w))
+        img = Image.fromarray(img.reshape(h, w)) 
+
         return img  
 
     # iterable create in json file
@@ -101,16 +100,18 @@ class DataLoader:
         with open(data_path + '/' + filename + '.json', 'w') as f:
             for i in range (len(traj_data_path)):
                 make_json.append({
-                    'frame_idx': i + 1,
+                    f'frame_idx_{i + 1}': {
                     'sequence' : None, # need to be changed
                     # 'img_path': data_path[i],
                     'traj_info': traj_data_path[i],
                     'move_state' : None, # 0 : stop, 1 : move
                     "label" : label[i], # get initial label
-                }),
+                        }
+                    }, 
+                )
             # save json file to data folder
-            json.dump(make_json, f, indent=4) # save json file to data folder
-        
+            result = json.dump(make_json, f, indent=4) # save json file to data folder
+        return result
         
     def read_json(json_data_path):
         # find json file in data root

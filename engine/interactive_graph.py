@@ -8,8 +8,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.widgets as widgets
 import numpy as np
+import json
 
-graph_path = '/Volumes/SJH/DataStore/click/0101_20220214135917_0004_00.tck' # D2107
+graph_path = '/Users/shinjunho/workspace/AirTouch/test_data/0101_20220214135700_0001_00/0101_20220214135700_0001_00.json' # D2107
 
 class SnaptoCursor(object):
     def __init__(self, ax, x, y):
@@ -32,17 +33,24 @@ class SnaptoCursor(object):
         self.txt.set_position((x,y))
         self.ax.figure.canvas.draw_idle()
 
-    def plot_graph(path, s):
-        data = np.fromfile(path, dtype=np.float32)
-        data = data.reshape(-1, 7)[:, 2][s : s + 10]
-        # plot data
-        fig, ax = plt.subplots()
-        ax.plot(data)
-        cursor = SnaptoCursor(ax, np.arange(int(len(data))), data)
-        plt.connect('motion_notify_event', cursor.mouse_move)
-        plt.show()
-
-
-# SnaptoCursor.plot_graph(graph_path, 32)
-
+    def plot_graph(path):
+        # read json file and plot traj_info row 
+        with open(path, 'r') as f:
+            data = json.load(f)
+            traj_info = data['traj_info']
+            x = []
+            y = []
+            for i in range(len(traj_info)):
+                x.append(traj_info[i]['x'])
+                y.append(traj_info[i]['y'])
+            fig, ax = plt.subplots()
+            ax.plot(x, y, 'o', ms=3)
+            snap_cursor = SnaptoCursor(ax, x, y)
+            fig.canvas.mpl_connect('motion_notify_event', snap_cursor.mouse_move)
+            plt.show()
+            
+            
+            
+        
+SnaptoCursor.plot_graph(graph_path)
 
