@@ -19,11 +19,23 @@ class test_app(QMainWindow):
         mysignal = MySignal()
         mysignal.signal.connect(self.signal_emmitted)
         mysignal.run()
+        
+        QPushButton('test', self).clicked.connect(self.open_file)
         self.show()
     
     @pyqtSlot()
     def signal_emmitted(self):
         print("signal emmitted")
+        
+    # if click open button, open file dialog
+    @pyqtSlot()
+    def open_file(self):
+        print("open file")
+        fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+        print(fname[0])
+        
+        # draw graph
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
