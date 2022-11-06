@@ -1,13 +1,19 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5.QtChart import *
+# from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PIL import Image
 
 
 import sys, os
 import json
+
+"""
+1. 데이터 파일 선택하면 json 파일 불러와야함
+2. json 파일 선택하면 이미지랑 좌표정보 불러와야함
+3. 이미지 띄우고 좌표정보 프레임 10개씩 matplotlib로 그려야함
+"""
 
 class Stream(QThread):
     image_signal = pyqtSignal(QImage)
@@ -83,65 +89,12 @@ class test_app(QMainWindow):
     # if click open button, open file dialog
     @pyqtSlot()
     def open_file(self):
-        print("open file")
         fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+        print("open file")
         input_file_path = fname[0]
         print(input_file_path)  
         # if get fname[0], write fname[0] to textedit
         self.lbl.setText(input_file_path)   
-    
-    # @pyqtSlot()
-    # def draw_graph(self):
-    #     # get traj_info from json file
-    #     mx = self.worker.trajectory_set[0]
-    #     my = self.worker.trajectory_set[1]
-    #     mz = self.worker.trajectory_set[2]
-    #     fx = self.worker.trajectory_set[3]
-    #     fy = self.worker.trajectory_set[4]
-    #     fz = self.worker.trajectory_set[5]
-    #     # print(mx, my, mz, fx, fy, fz)
-        
-    #     # Qchart draw graph 10 frames
-    #     # create series
-    #     series1 = QLineSeries()
-    #     series2 = QLineSeries()
-    #     series3 = QLineSeries()
-    #     series4 = QLineSeries()
-    #     series5 = QLineSeries()
-    #     series6 = QLineSeries()
-        
-    #     # add data to series
-    #     for i in range(len(mx)):
-    #         series1.append(i, mx[i])
-    #         series2.append(i, my[i])
-    #         series3.append(i, mz[i])
-    #         series4.append(i, fx[i])
-    #         series5.append(i, fy[i])
-    #         series6.append(i, fz[i])
-        
-    #     # create chart
-    #     chart = QChart()
-    #     chart.addSeries(series1)
-    #     chart.addSeries(series2)
-    #     chart.addSeries(series3)
-    #     chart.addSeries(series4)
-    #     chart.addSeries(series5)
-    #     chart.addSeries(series6)
-    #     chart.createDefaultAxes()
-    #     chart.setTitle("Trajectory")
-        
-    #     # create chart view
-    #     chartView = QChartView(chart)
-    #     chartView.setRenderHint(QPainter.Antialiasing)
-        
-    #     # set chart view to layout
-    #     layout = QGridLayout()
-    #     layout.addWidget(chartView, 0, 0)
-    #     self.setLayout(layout)
-        
-    #     pass
-        
-        
     
     @pyqtSlot()
     def png_viewer(self):
