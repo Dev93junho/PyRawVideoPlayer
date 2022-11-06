@@ -34,19 +34,26 @@ class SnaptoCursor(object):
         self.ax.figure.canvas.draw_idle()
 
     def plot_graph(path):
-        # read json file and plot traj_info row 
+        # read json file and get traj_info
         with open(path, 'r') as f:
             data = json.load(f)
-            traj_info = data['traj_info']
-            x = []
+            traj_info = data
+            # traj_info = np.array(traj_info)
+            print(traj_info[0].get('traj'))
+            # draw graph from traj_info
             y = []
-            for i in range(len(traj_info)):
-                x.append(traj_info[i]['x'])
-                y.append(traj_info[i]['y'])
-            fig, ax = plt.subplots()
-            ax.plot(x, y, 'o', ms=3)
-            snap_cursor = SnaptoCursor(ax, x, y)
+            z = []
+            
+            for frm in range(len(traj_info)):
+                y.append(traj_info[frm].get('traj')[0])
+                z.append(traj_info[frm].get('traj')[1])
+            
+            # if press key, windowed 10 frames
+            fig, ax = plt.subplots(111)
+            ax.plot(y, z)# 'o', color='black') 
+            snap_cursor = SnaptoCursor(ax, y, z)
             fig.canvas.mpl_connect('motion_notify_event', snap_cursor.mouse_move)
+
             plt.show()
             
             

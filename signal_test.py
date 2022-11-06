@@ -8,6 +8,7 @@ from PIL import Image
 
 import sys, os
 import json
+from engine.DataLoader import DataLoader
 
 """
 1. 데이터 파일 선택하면 json 파일 불러와야함
@@ -70,16 +71,15 @@ class test_app(QMainWindow):
         mysignal.run()
         
         self.worker = Worker()
-        self.worker.trajectory_set.connect(self.trajectory_set)
-        QPushButton('test', self).clicked.connect(self.open_file)
+        # self.worker.trajectory_set.connect(self.trajectory_set)
+        self.btn_get_path = QPushButton('test', self).clicked.connect(self.open_file)
         
         self.lbl = QLabel(self)
         self.lbl.setGeometry(50, 50, 800, 15)
         self.lbl.setText('text')
         self.lbl.move(5, 50)
-               
-        self.setGeometry(500,500,1000,800)
         
+        self.setGeometry(500,300,1000,800)
         self.show()
     
     @pyqtSlot()
@@ -94,8 +94,10 @@ class test_app(QMainWindow):
         input_file_path = fname[0]
         print(input_file_path)  
         # if get fname[0], write fname[0] to textedit
-        self.lbl.setText(input_file_path)   
-    
+        self.lbl.setText(input_file_path)
+        DataLoader(input_file_path)
+        return input_file_path
+
     @pyqtSlot()
     def png_viewer(self):
         # get png file path
@@ -109,6 +111,30 @@ class test_app(QMainWindow):
         layout = QGridLayout()
         layout.addWidget(self.lbl, 0, 0)
         self.setLayout(layout)
+        self.show()
+    
+    @pyqtSlot()
+    def graph_viewer(self):
+        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+        from matplotlib.figure import Figure
+        import matplotlib.pyplot as plt
+        
+        # get json
+        json_path = self.lbl.text() + '/' + self.lbl.text().split('/')[-1] + '.json'
+        print("json path :", json_path)
+        
+        # read json, get 10 frames traj_info value
+        with open(json_path, 'r')  as f_json:
+            json_data = json.load(f_json)
+            trajectory_set = json_data['traj_info']
+            print("trajectory_set :", trajectory_set)
+            # get 10 frames traj_info value
+            for i in range(10):
+                traj_info = trajectory_set[i]
+                print("traj_info :", traj_info)
+                
+            
+        
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)

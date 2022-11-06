@@ -31,6 +31,7 @@ import datetime
 import numpy as np
 from PIL import Image
 import json
+import pandas as pd
 
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") # get current time
 
@@ -100,15 +101,12 @@ class DataLoader:
         with open(data_path + '/' + filename + '.json', 'w') as f:
             for i in range (len(traj_data_path)):
                 make_json.append({
-                    f'frame_idx_{i + 1}': {
-                    'sequence' : None, # need to be changed
-                    # 'img_path': data_path[i],
-                    'traj_info': traj_data_path[i],
-                    'move_state' : None, # 0 : stop, 1 : move
-                    "label" : label[i], # get initial label
-                        }
-                    }, 
-                )
+                        # pandas dataframe to json
+                        "frame" : filename + "_" + str(i) + ".png",
+                        "traj" : traj_data_path[i],
+                        "state" : None,
+                        "label" : label[i],
+                })
             # save json file to data folder
             result = json.dump(make_json, f, indent=4) # save json file to data folder
         return result
