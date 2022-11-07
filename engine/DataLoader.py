@@ -41,7 +41,8 @@ class DataLoader:
         # self.root = self.argParse(__file__)
         abs_data_path = os.path.abspath(__file__) 
         splited_path = os.path.dirname(__file__)
-        data_name = abs_data_path.split('/')[-1].split('.')[0] or abs_data_path.split('\\')[-1].split('.')[0] 
+        abs_data_path = abs_data_path.replace('\\', '/')
+        data_name = abs_data_path.split('/')[-1].split('.')[0]# or abs_data_path.split('\\')[-1].split('.')[0] 
         print("디렉토리 경로 : ", splited_path,"\n","파일(폴더)명 : ", data_name) # print data path & folder name
                
         # if img folder not exist
