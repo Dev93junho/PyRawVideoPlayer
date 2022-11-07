@@ -1,7 +1,7 @@
 import sys, os
 from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QFileDialog, QLabel
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,21 +10,26 @@ from pynput import keyboard
 
 from engine.DataLoader import DataLoader
 from engine.interactive_graph import SnaptoCursor
+import engine.AutoLabel as albl
 
 class MyWindow(QWidget):
-    global root, event
+    global root
     
     def __init__(self):
         super().__init__()
         self.initUI()
         self.setLayout(self.layout)
-        self.setGeometry(200, 200, 1200, 800)
+        self.setGeometry(200, 200, 500, 800)
 
     def initUI(self):
         self.btn_draw_graph = QPushButton("DRAW Graph")
         self.btn_draw_graph.clicked.connect(self.btnClicked)
         self.btn_file_load = QPushButton("Load Data")
         self.btn_file_load.clicked.connect(self.open_file)
+        self.btn_update_data = QPushButton("Update Data")
+        self.btn_update_data.clicked.connect(self.image_viewer)
+        self.btn_label_data = QPushButton("Label Data")
+        self.btn_label_data.clicked.connect(self.label_data)
         
         # frame Layout
         img_sample = QPixmap('/Users/shinjunho/workspace/AirTouch/test_data/0101_20220214135700_0001_00/img/0101_20220214135700_0001_00_0.png')
@@ -47,6 +52,8 @@ class MyWindow(QWidget):
         btnLayout = QHBoxLayout()
         btnLayout.addWidget(self.btn_file_load)
         btnLayout.addWidget(self.btn_draw_graph)
+        btnLayout.addWidget(self.btn_update_data)
+        btnLayout.addWidget(self.btn_label_data)
         btnLayout.addStretch(1)
 
         # merge layout
@@ -55,7 +62,7 @@ class MyWindow(QWidget):
         self.layout.addLayout(canvasLayout)
 
     def btnClicked(self):
-        global root, event
+        global root
         # get json
         splited_path = os.path.dirname(root)
         data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
@@ -82,9 +89,9 @@ class MyWindow(QWidget):
             i = 0
             ax.plot(ax_t, z[i : i + 10])
             # if press space bar, move to next 1 frames
-            if event.key() == Qt.Key_Space:
-                ax.clear()
-                i += 1
+            # if event.key() == Qt.Key_Space:
+            #     ax.clear()
+            #     i += 1
  
         self.graph.draw() 
                 
@@ -99,23 +106,22 @@ class MyWindow(QWidget):
         # get json
         splited_path = os.path.dirname(root)
         data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
-        json_path = splited_path + '/' + data_name + '/' + data_name + '.json'        
-        return  None
+        img_path = splited_path + '/' + data_name + '/img/' + data_name + '_' + str(0) + '.png'
+        if os.path.isfile(img_path):
+            img_sample = QPixmap(img_path)
+            self.frm.setPixmap(img_sample)
+            print("image updated")       
+
+    def label_data(self):
+        global root
+        # get json
+        splited_path = os.path.dirname(root)
+        data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
+        json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
+        
+        albl.update_json(json_path, [0]['label'], 2)
+        print("완료!")
     
-    def keyPressEvent(self):
-        global event
-        event = event
-        print(event.key())
-        if event.key() == Qt.Key_Space:
-            print('space bar pressed')
-            self.btnClicked()
-        elif event.key() == Qt.Key_Escape:
-            print('escape bar pressed')
-            self.close()
-        else:
-            pass 
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()
