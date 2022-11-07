@@ -64,8 +64,9 @@ class MyWindow(QWidget):
     def btnClicked(self):
         global root
         # get json
+        root = root.replace('\\', '/')
         splited_path = os.path.dirname(root)
-        data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
+        data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
         # SnaptoCursor(self.fig, self.graph, json_path)
@@ -104,8 +105,9 @@ class MyWindow(QWidget):
     def image_viewer(self):
         global root
         # get json
+        root = root.replace('\\', '/')
         splited_path = os.path.dirname(root)
-        data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
+        data_name = root.split('/')[-1].split('.')[0]
         img_path = splited_path + '/' + data_name + '/img/' + data_name + '_' + str(0) + '.png'
         if os.path.isfile(img_path):
             img_sample = QPixmap(img_path)
@@ -115,9 +117,9 @@ class MyWindow(QWidget):
     def label_data(self):
         global root
         # get json
-        splited_path = os.path.dirname(root)
         root = root.replace('\\', '/')
-        data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
+        splited_path = os.path.dirname(root)
+        data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
         albl.update_json(json_path)#, 0, "label", 2)
