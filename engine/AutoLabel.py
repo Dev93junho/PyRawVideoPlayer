@@ -11,9 +11,22 @@ import numpy as np
 import json
 import os, sys
 
-def json_load(data):
-   pass 
+def read_json(json_data_path):
+   # find json file in data root
+   with open(json_data_path, 'r') as f:
+      json_data = json.load(f)
+      return json_data
 
-def json_save(data):
-   pass 
+def update_json(path, idx, value):
+   with open(path, 'r+') as f:
+      pre_data = json.load(f)
+      suf_data = pre_data[idx] = value
+      return suf_data
+
+def delete_json(path, idx):
+   with open(path, 'r+') as f:
+      pre_data = json.load(f)
+      suf_data = pre_data[idx] = None
+      return suf_data
+
 

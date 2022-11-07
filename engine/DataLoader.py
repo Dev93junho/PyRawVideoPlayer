@@ -25,7 +25,6 @@ output : data folder with img folder, copied tck,
 4. if get update request, windowing to next 10 frames trajectory
 """
 
-
 import os, shutil
 import datetime
 import numpy as np
@@ -67,13 +66,15 @@ class DataLoader:
                 # # save png file to img folder from img file
                 img_root = splited_path + '/' + data_name + '.img' # get img file path
                 
-                raw_image = np.fromfile(img_root, dtype = np.uint8, count = 640*480)
+                raw_image = np.fromfile(img_root, dtype = np.uint16, count = 640*480)
                 for i in range(0, len(raw_image), 640*480):
                     img = raw_image[i:i+640*480].reshape(480, 640)
                     img = Image.fromarray(img)
                     self.imgfile_read_frame(img_root, new_img_path) # read img file 
                     print("이미지 파일을 저장합니다.")
                     img.save(new_img_path + '/' + data_name + '_' + str(i // (640*480)) + '.png')
+                    print(f"{i} 번째 이미지 파일을 저장합니다.")
+                print("이미지 파일 저장이 완료되었습니다.")
                     
                 
                 
@@ -85,7 +86,7 @@ class DataLoader:
             trajectory_set_convert = trajectory_set.tolist() # convert numpy array to float
             label_set_convert = label_set.tolist() # convert numpy array to float
             self.create_json(new_data_path, trajectory_set_convert, label_set_convert, data_name) 
-        return new_img_path, 
+        # return new_img_path
             
     # uint8 to PIL Image
     def imgfile_read_frame(self, bin_path, img_folder):
@@ -118,24 +119,6 @@ class DataLoader:
             result = json.dump(make_json, f, indent=4) # save json file to data folder
         return result
         
-    def read_json(json_data_path):
-        # find json file in data root
-        with open(json_data_path, 'r') as f:
-            json_data = json.load(f)
-            return json_data
-
-    def update_json(path, idx, value):
-        with open(path, 'w+') as f:
-            pre_data = json.load(f)
-            suf_data = pre_data[idx] = value
-            return suf_data
-
-    def delete_json(path, idx):
-        with open(path, 'w+') as f:
-            pre_data = json.load(f)
-            suf_data = pre_data[idx] = None
-            return suf_data
-    
     def tck_to_trj(self, tck_path):
         # read tck file
         raw = np.fromfile(tck_path, dtype=np.float32)
