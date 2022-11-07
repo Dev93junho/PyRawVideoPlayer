@@ -16,13 +16,14 @@ def read_json(json_data_path):
    file = json.loads(json.dumps(json_data_path))
    return file
 
-def update_json(path, idx, value):
-      file = json.loads(json.dumps(path))
-      file[idx] = value
-      return file
+def update_json(path):#, frame_nums, idx, value):
+      file = json.loads(path)
+      # file[frame_nums][idx] = value
+      print(file)
+      # return file
 
 def delete_json(path, idx):
-   with open(path, 'r+') as f:
+   with open(path, 'r') as f:
       pre_data = json.load(f)
       suf_data = pre_data[idx] = None
       return suf_data

@@ -116,10 +116,11 @@ class MyWindow(QWidget):
         global root
         # get json
         splited_path = os.path.dirname(root)
+        root = root.replace('\\', '/')
         data_name = root.split('/')[-1].split('.')[0] or root.split('\\')[-1].split('.')[0] 
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
-        albl.update_json(json_path, [0]['label'], 2)
+        albl.update_json(json_path)#, 0, "label", 2)
         print("완료!")
     
 if __name__ == "__main__":
