@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.widgets as widgets
 import numpy as np
 import json
+from pynput.keyboard import Key, Listener
 
 graph_path = '/Users/shinjunho/workspace/AirTouch/test_data/0101_20220214135700_0001_00/0101_20220214135700_0001_00.json' # D2107
 
@@ -39,25 +40,30 @@ class SnaptoCursor(object):
             data = json.load(f)
             traj_info = data
             # traj_info = np.array(traj_info)
-            print(traj_info[0].get('traj'))
+            # print(traj_info[0].get('traj'))
             # draw graph from traj_info
             y = []
             z = []
             
             for frm in range(len(traj_info)):
-                y.append(traj_info[frm].get('traj')[0])
-                z.append(traj_info[frm].get('traj')[1])
+                y.append(traj_info[frm].get('traj')[1])
+                z.append(traj_info[frm].get('traj')[2])
             
             # if press key, windowed 10 frames
-            fig, ax = plt.subplots(111)
-            ax.plot(y, z)# 'o', color='black') 
-            snap_cursor = SnaptoCursor(ax, y, z)
+            fig, ax = plt.subplots()
+            ax_z = np.linspace(np.min(z), np.max(z))
+            ax_t = np.linspace(1, 10, 10)
+
+
+            for i in range(0, len(z)):
+                i = 0
+                ax.plot(ax_t, z[i : i + 10])
+
+            # ax.plot(ax_t, z)
+            snap_cursor = SnaptoCursor(ax, ax_t, z)
             fig.canvas.mpl_connect('motion_notify_event', snap_cursor.mouse_move)
 
             plt.show()
-            
-            
-            
-        
-SnaptoCursor.plot_graph(graph_path)
 
+if __name__ == "__main__":             
+    SnaptoCursor.plot_graph(object)
