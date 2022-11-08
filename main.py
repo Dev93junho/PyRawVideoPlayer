@@ -76,19 +76,25 @@ class MyWindow(QWidget):
         # 그래프의 축을 그려넣습니다.
         with open(json_path, 'r') as f_json:
             data = json.load(f_json)
-            traj_info = data
-            y = []
-            z = []
+            m_x = []
+            m_y = []
+            m_z = []
+            f_x = []
+            f_y = []
+            f_z = []
             
-            for frm in range(len(traj_info)):
-                y.append(traj_info[frm].get('traj')[1])
-                z.append(traj_info[frm].get('traj')[2])
+            for frm in range(len(data)):
+                m_x.append(data[frm].get('traj')[0])
+                m_y.append(data[frm].get('traj')[1])
+                m_z.append(data[frm].get('traj')[2])
+                f_x.append(data[frm].get('traj')[2])
+                f_y.append(data[frm].get('traj')[2])
+                f_z.append(data[frm].get('traj')[2])
                 
         ax_t = np.linspace(0, 10, 10)
-        # ax.plot(ax_t, z, 'r')
-        for i in range(len(z)):
+        for i in range(len(m_z)):
             i = 0
-            ax.plot(ax_t, z[i : i + 10])
+            ax.plot(ax_t, m_z[i : i + 10])
             # if press space bar, move to next 1 frames
             # if event.key() == Qt.Key_Space:
             #     ax.clear()
@@ -122,7 +128,7 @@ class MyWindow(QWidget):
         data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
-        albl.update_json(json_path)#, 0, "label", 2)
+        albl.read_json(json_path)#, 0, "label", 2)
         print("완료!")
     
 if __name__ == "__main__":
