@@ -14,25 +14,29 @@ import engine.AutoLabel as albl
 
 class MyWindow(QWidget):
     global root
-    
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.frame = 0
         self.setLayout(self.layout)
         self.setGeometry(200, 200, 500, 800)
 
     def initUI(self):
         self.btn_draw_graph = QPushButton("DRAW Graph")
         self.btn_draw_graph.clicked.connect(self.btnClicked)
-        self.btn_file_load = QPushButton("Load Data")
+        self.btn_file_load = QPushButton("Load")
         self.btn_file_load.clicked.connect(self.open_file)
-        self.btn_update_data = QPushButton("Update Data")
+        self.btn_update_data = QPushButton("Update")
         self.btn_update_data.clicked.connect(self.image_viewer)
-        self.btn_label_data = QPushButton("Label Data")
+        self.btn_label_data = QPushButton("Label")
         self.btn_label_data.clicked.connect(self.label_data)
+        self.btn_prev_data = QPushButton("Prev")
+        self.btn_prev_data.clicked.connect(self.prev_frame)
+        self.btn_next_frame = QPushButton("next")
+        self.btn_next_frame.clicked.connect(self.next_frame)
         
         # frame Layout
-        img_sample = QPixmap('/Users/shinjunho/workspace/AirTouch/test_data/0101_20220214135700_0001_00/img/0101_20220214135700_0001_00_0.png')
+        img_sample = QPixmap('./static/init_black.png')
         self.frm = QLabel(self)
         self.frm.setGeometry(18, 25, 640, 480)
         self.frm.setPixmap(img_sample)
@@ -54,6 +58,8 @@ class MyWindow(QWidget):
         btnLayout.addWidget(self.btn_draw_graph)
         btnLayout.addWidget(self.btn_update_data)
         btnLayout.addWidget(self.btn_label_data)
+        btnLayout.addWidget(self.btn_prev_data)
+        btnLayout.addWidget(self.btn_next_frame)
         btnLayout.addStretch(1)
 
         # merge layout
@@ -120,6 +126,16 @@ class MyWindow(QWidget):
             self.frm.setPixmap(img_sample)
             print("image updated")       
 
+    def next_frame(self):
+        global frame
+        
+        self.frame = self.frame + 1
+    
+    def prev_frame(self):
+        global frame
+        
+        frame = frame - 1
+    
     def label_data(self):
         global root
         # get json
@@ -128,7 +144,7 @@ class MyWindow(QWidget):
         data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
-        albl.read_json(json_path)#, 0, "label", 2)
+        albl.update_json(json_path, 0, "label", 4.0)
         print("완료!")
     
 if __name__ == "__main__":
