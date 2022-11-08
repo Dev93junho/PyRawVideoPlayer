@@ -1,7 +1,7 @@
 import sys, os
 from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QFileDialog, QLabel
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QThread #, QObject, pyqtSignal, pyqtSlot
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,20 +12,22 @@ from engine.DataLoader import DataLoader
 from engine.interactive_graph import SnaptoCursor
 import engine.AutoLabel as albl
 
-class MyWindow(QWidget):
+class AirNote(QWidget):
     global root
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.frame = 0
         self.setLayout(self.layout)
         self.setGeometry(200, 200, 500, 800)
+        
+        # self.KeyPressAgent = KeyPressThread()
+        # self.KeyPressAgent.start()
 
     def initUI(self):
-        self.btn_draw_graph = QPushButton("DRAW Graph")
-        self.btn_draw_graph.clicked.connect(self.btnClicked)
         self.btn_file_load = QPushButton("Load")
-        self.btn_file_load.clicked.connect(self.open_file)
+        self.btn_file_load.clicked.connect(self.open_file)        
+        self.btn_draw_graph = QPushButton("DRAW Graph")
+        self.btn_draw_graph.clicked.connect(self.draw_graph)
         self.btn_update_data = QPushButton("Update")
         self.btn_update_data.clicked.connect(self.image_viewer)
         self.btn_label_data = QPushButton("Label")
@@ -53,7 +55,7 @@ class MyWindow(QWidget):
         canvasLayout.addWidget(self.graph)
 
         # button Layout
-        btnLayout = QHBoxLayout()
+        btnLayout = QVBoxLayout()
         btnLayout.addWidget(self.btn_file_load)
         btnLayout.addWidget(self.btn_draw_graph)
         btnLayout.addWidget(self.btn_update_data)
@@ -63,25 +65,34 @@ class MyWindow(QWidget):
         btnLayout.addStretch(1)
 
         # merge layout
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
         self.layout.addLayout(btnLayout)
         self.layout.addLayout(canvasLayout)
 
-    def btnClicked(self):
-        global root
+    def open_file(self):
+        global root, frame
+        fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+        root = fname[0]
+        DataLoader(root)
+        frame = 0
+        print("current frame : ", frame)
+        self.draw_graph()
+        
+        
+    def draw_graph(self):
+        global root, frame
         # get json
         root = root.replace('\\', '/')
         splited_path = os.path.dirname(root)
         data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
-        
         # SnaptoCursor(self.fig, self.graph, json_path)
-        
         ax = self.fig.add_subplot(1,1,1)  # fig를 1행 1칸으로 나누어 1칸안에 넣어줍니다      
         
         # 그래프의 축을 그려넣습니다.
         with open(json_path, 'r') as f_json:
             data = json.load(f_json)
+            
             m_x = []
             m_y = []
             m_z = []
@@ -98,22 +109,11 @@ class MyWindow(QWidget):
                 f_z.append(data[frm].get('traj')[2])
                 
         ax_t = np.linspace(0, 10, 10)
-        for i in range(len(m_z)):
-            i = 0
-            ax.plot(ax_t, m_z[i : i + 10])
-            # if press space bar, move to next 1 frames
-            # if event.key() == Qt.Key_Space:
-            #     ax.clear()
-            #     i += 1
- 
-        self.graph.draw() 
-                
-    def open_file(self):
-        global root
-        fname = QFileDialog.getOpenFileName(self, 'Open file', './')
-        root = fname[0]
-        DataLoader(root)
+        # erase previous graph
         
+        ax.plot(ax_t, m_z[frame : frame + 10])
+        self.graph.draw() 
+
     def image_viewer(self):
         global root
         # get json
@@ -128,27 +128,47 @@ class MyWindow(QWidget):
 
     def next_frame(self):
         global frame
-        
-        self.frame = self.frame + 1
+        self.fig.clear()
+        frame = frame + 1
+        print("current frame : ", frame)
+        # redraw graph
+        self.draw_graph()
     
     def prev_frame(self):
         global frame
-        
-        frame = frame - 1
-    
+        if frame == 0:
+            print("Can't go back, Here is First Frame")
+        else:
+            self.fig.clear()
+            frame = frame - 1
+            print("current frame : ", frame)
+            self.draw_graph()
+            
     def label_data(self):
-        global root
+        global root, frame
         # get json
         root = root.replace('\\', '/')
         splited_path = os.path.dirname(root)
         data_name = root.split('/')[-1].split('.')[0]
         json_path = splited_path + '/' + data_name + '/' + data_name + '.json'
         
-        albl.update_json(json_path, 0, "label", 4.0)
+        albl.update_json(json_path, frame, "label", True)
         print("완료!")
     
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Escape:
+            self.close()
+        elif e.key() == Qt.Key_Left:
+            self.prev_frame()
+        elif e.key() == Qt.Key_Right:
+            self.next_frame()
+        elif e.key() == Qt.Key_Space:
+            self.label_data()
+        elif e.key() == Qt.Key_I:
+            self.open_file()
+            
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
+    airnote = AirNote()
+    airnote.show()
     app.exec_()
